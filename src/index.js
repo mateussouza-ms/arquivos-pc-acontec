@@ -39,7 +39,7 @@ function processFolder(folderDir) {
     if (!fs.existsSync(pathFile2)) {
       console.log("ARQUIVO NÃO ENCONTRADO:", pathFile2);
 
-      fs.appendFileSync(RESULT_FILE, `${pathFile2}${os.EOL}`);
+      fs.appendFileSync(RESULT_FILE, `${itemPath}${os.EOL}`);
       return;
     }
   });
