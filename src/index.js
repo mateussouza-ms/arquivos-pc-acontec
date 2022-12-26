@@ -1,8 +1,10 @@
 import * as fs from "fs";
-import path from "path";
+import * as os from "os";
 
-const FOLDER_TO_COMPARE_1 = "D:/temp";
-const FOLDER_TO_COMPARE_2 = "C:/temp";
+const FOLDER_TO_COMPARE_1 = "C:/temp";
+const FOLDER_TO_COMPARE_2 = "D:/temp";
+
+const RESULT_FILE = `${os.homedir()}\\ARQUIVOS_NAO_COPIADOS_${getCurrentDateTimeStr()}.txt`;
 
 function processFolder(folderDir) {
   var list = [];
@@ -10,7 +12,7 @@ function processFolder(folderDir) {
   list.forEach((item) => {
     const itemPath = `${folderDir}/${item}`;
 
-    console.log("\n\n\n");
+    console.log("\n");
     console.log("Processando item:", itemPath);
 
     const isFile = fs.existsSync(itemPath) && fs.lstatSync(itemPath).isFile();
@@ -27,52 +29,25 @@ function processFolder(folderDir) {
     );
 
     if (!fs.existsSync(pathFile2)) {
-      console.log("NOVO ARQUIVO:", pathFile2);
+      console.log("ARQUIVO NÃO ENCONTRADO:", pathFile2);
 
-      const newDir = path.dirname(pathFile2);
-      if (!fs.existsSync(newDir)) {
-        fs.mkdirSync(newDir);
-      }
-
-      fs.copyFileSync(itemPath, pathFile2);
+      fs.appendFileSync(RESULT_FILE, `${pathFile2}${os.EOL}`);
       return;
     }
-
-    const statsFile1 = fs.statSync(itemPath);
-    const statsFile2 = fs.statSync(pathFile2);
-    const lastModifiedDate1 = new Date(statsFile1.mtime);
-    const lastModifiedDate2 = new Date(statsFile2.mtime);
-    lastModifiedDate1.setSeconds(0);
-    lastModifiedDate2.setSeconds(0);
-
-    if (lastModifiedDate1 > lastModifiedDate2) {
-      console.log(
-        "ARQUIVO MODIFICADO. Data Antiga: " +
-          lastModifiedDate2.toLocaleString() +
-          ", Nova data: " +
-          lastModifiedDate1.toLocaleString()
-      );
-
-      const modifiedFilesFolder = `${FOLDER_TO_COMPARE_2}/ARQUIVOS_MODIFICADOS`;
-
-      const newPath = `${modifiedFilesFolder}/${pathFile2
-        .replace(FOLDER_TO_COMPARE_2, "")
-        .replaceAll("/", "__.__")}`;
-
-      if (!fs.existsSync(modifiedFilesFolder)) {
-        fs.mkdirSync(modifiedFilesFolder);
-      }
-
-      fs.copyFileSync(itemPath, newPath);
-    }
-
-    console.log(
-      "ARQUIVO ORIGINAL. Data Antiga: " +
-        lastModifiedDate2.toLocaleString() +
-        ", Nova data: " +
-        lastModifiedDate1.toLocaleString()
-    );
   });
+}
+
+function getCurrentDateTimeStr() {
+  const now = new Date();
+
+  const day = String(now.getDay()).padStart(2, "0");
+  const month = String(now.getMonth()).padStart(2, "0");
+  const year = String(now.getFullYear()).padStart(4, "0");
+  const hour = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+
+  return `${day}-${month}-${year}_${hour}-${minutes}-${seconds}`;
 }
 
 function main() {
