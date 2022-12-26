@@ -15,9 +15,17 @@ function processFolder(folderDir) {
     console.log("\n");
     console.log("Processando item:", itemPath);
 
-    const isFile = fs.existsSync(itemPath) && fs.lstatSync(itemPath).isFile();
+    const exists = fs.existsSync(itemPath);
 
-    if (!isFile) {
+    if (!exists) {
+      console.log("ARQUIVO OU PASTA NÃO ENCONTRADO(A).");
+      fs.appendFileSync(RESULT_FILE, `${itemPath}${os.EOL}`);
+      return;
+    }
+
+    const isDirectory = fs.lstatSync(itemPath).isDirectory();
+
+    if (isDirectory) {
       console.log("O item é uma pasta.");
       processFolder(itemPath);
       return;
