@@ -72,8 +72,8 @@ function processFolder(folderDir) {
 function getCurrentDateTimeStr() {
   const now = new Date();
 
-  const day = String(now.getDay()).padStart(2, "0");
-  const month = String(now.getMonth()).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const month = String(now.getMonth() + 1).padStart(2, "0");
   const year = String(now.getFullYear()).padStart(4, "0");
   const hour = String(now.getHours()).padStart(2, "0");
   const minutes = String(now.getMinutes()).padStart(2, "0");
