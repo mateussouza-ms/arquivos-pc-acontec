@@ -1,10 +1,12 @@
 import * as fs from "fs";
 import * as os from "os";
+import path from "path";
 
 const FOLDER_TO_COMPARE_1 = "C:/temp";
 const FOLDER_TO_COMPARE_2 = "D:/temp";
 
 const RESULT_FILE = `${os.homedir()}\\ARQUIVOS_NAO_COPIADOS_${getCurrentDateTimeStr()}.txt`;
+const RESULT_FILE_COMMANDS = `${os.homedir()}\\ARQUIVOS_NAO_COPIADOS_${getCurrentDateTimeStr()}_COMANDOS.txt`;
 
 function processFolder(folderDir) {
   var list = [];
@@ -20,6 +22,17 @@ function processFolder(folderDir) {
     if (!exists) {
       console.log("ARQUIVO OU PASTA NÃO ENCONTRADO(A).");
       fs.appendFileSync(RESULT_FILE, `${itemPath}${os.EOL}`);
+
+      const dirName = path.dirname(itemPath);
+      const fileName = path.basename(itemPath);
+
+      fs.appendFileSync(
+        RESULT_FILE_COMMANDS,
+        `robocopy "${dirName}" "${dirName.replace(
+          FOLDER_TO_COMPARE_1,
+          FOLDER_TO_COMPARE_2
+        )}" "${fileName}"${os.EOL}`
+      );
       return;
     }
 
@@ -40,6 +53,17 @@ function processFolder(folderDir) {
       console.log("ARQUIVO NÃO ENCONTRADO:", pathFile2);
 
       fs.appendFileSync(RESULT_FILE, `${itemPath}${os.EOL}`);
+
+      const dirName = path.dirname(itemPath);
+      const fileName = path.basename(itemPath);
+
+      fs.appendFileSync(
+        RESULT_FILE_COMMANDS,
+        `robocopy "${dirName}" "${dirName.replace(
+          FOLDER_TO_COMPARE_1,
+          FOLDER_TO_COMPARE_2
+        )}" "${fileName}"${os.EOL}`
+      );
       return;
     }
   });
